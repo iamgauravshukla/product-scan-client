@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Configuration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #6366f1;
+            margin-bottom: 1rem;
+        }
+        .section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .section:last-child {
+            border-bottom: none;
+        }
+        h2 {
+            color: #1e293b;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        .status {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .status.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        .step {
+            margin-bottom: 1.5rem;
+        }
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #6366f1;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        ol {
+            margin-left: 3rem;
+            margin-top: 0.5rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: #6366f1;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+        .btn:hover {
+            background: #4f46e5;
+        }
+        .checklist {
+            list-style: none;
+            margin-left: 0;
+        }
+        .checklist li::before {
+            content: "☐ ";
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Skincare Analyzer - Setup Guide</h1>
+        <p style="color: #64748b; margin-bottom: 2rem;">
+            Follow these steps to configure your skincare product analyzer with WooCommerce.
+        </p>
+
+        <div class="section">
+            <h2>📋 Pre-Setup Checklist</h2>
+            <ul class="checklist">
+                <li>WordPress website with WooCommerce installed</li>
+                <li>Node.js installed (v14 or higher)</li>
+                <li>Access to WordPress admin panel</li>
+                <li>Products added to WooCommerce store</li>
+                <li>Server with port 3000 available</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>🔧 Step 1: Backend Configuration</h2>
+            <div class="step">
+                <span class="step-number">1</span>
+                <strong>Navigate to backend directory</strong>
+                <div class="code-block">cd /home/vibecode/workspace/backend</div>
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>Edit the .env file with your WooCommerce credentials</strong>
+                <div class="code-block">
+WOOCOMMERCE_URL=https://your-store.com<br>
+WOOCOMMERCE_CONSUMER_KEY=ck_your_key_here<br>
+WOOCOMMERCE_CONSUMER_SECRET=cs_your_secret_here
+                </div>
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>Get WooCommerce API credentials:</strong>
+                <ol>
+                    <li>Login to WordPress admin</li>
+                    <li>Go to WooCommerce > Settings > Advanced > REST API</li>
+                    <li>Click "Add Key"</li>
+                    <li>Set permissions to "Read/Write"</li>
+                    <li>Copy the Consumer Key and Consumer Secret</li>
+                </ol>
+            </div>
+            <div class="step">
+                <span class="step-number">4</span>
+                <strong>Add OpenAI API Key (Optional but Recommended):</strong>
+                <p style="margin-left: 3rem; color: #64748b; margin-top: 0.5rem;">
+                    For AI-powered skin image analysis, add your OpenAI API key to the .env file:
+                </p>
+                <ol>
+                    <li>Go to <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a></li>
+                    <li>Sign up or log in to your account</li>
+                    <li>Click "Create new secret key"</li>
+                    <li>Copy the API key (starts with <code>sk-</code>)</li>
+                    <li>Add to .env file: <code>OPENAI_API_KEY=sk-your-key-here</code></li>
+                </ol>
+                <div class="code-block">
+OPENAI_API_KEY=sk-your-openai-api-key-here
+                </div>
+                <p style="margin-left: 3rem; color: #64748b; margin-top: 0.5rem; font-size: 0.9rem;">
+                    <strong>Note:</strong> Without OpenAI API key, the system will still work but won't perform AI image analysis. It will use only user-selected conditions for matching.
+                </p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🏪 Step 2: WooCommerce Product Setup</h2>
+            <div class="step">
+                <span class="step-number">1</span>
+                <strong>Add ingredients to products</strong>
+                <p style="margin-left: 3rem; color: #64748b;">
+                    For each product, add a custom field named "ingredients" with comma-separated values:
+                </p>
+                <div class="code-block">
+Example: hyaluronic acid, niacinamide, glycerin, vitamin c
+                </div>
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>Create product categories</strong>
+                <p style="margin-left: 3rem; color: #64748b;">
+                    Recommended categories: Cleanser, Moisturizer, Serum, Toner, Treatment, Acne Treatment, Anti-Aging
+                </p>
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>Set product prices</strong>
+                <p style="margin-left: 3rem; color: #64748b;">
+                    Ensure all products have prices set for budget filtering to work
+                </p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🚀 Step 3: Install Dependencies & Start Server</h2>
+            <div class="step">
+                <span class="step-number">1</span>
+                <strong>Install npm dependencies (including OpenAI SDK)</strong>
+                <div class="code-block">
+cd /home/vibecode/workspace/backend<br>
+npm install
+                </div>
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>After updating .env, start/restart the server</strong>
+                <div class="code-block">
+# Development mode (auto-restart on changes)<br>
+npm run dev<br><br>
+# Or production mode<br>
+npm start
+                </div>
+            </div>
+            <div class="status warning" style="margin-top: 1rem;">
+                ⚠️ Make sure WooCommerce API credentials are configured in .env file
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🌐 Step 4: WordPress Integration</h2>
+            <p style="margin-bottom: 1rem;">Choose one of these integration methods:</p>
+
+            <div class="step">
+                <span class="step-number">A</span>
+                <strong>Custom Plugin (Recommended)</strong>
+                <p style="margin-left: 3rem; color: #64748b;">
+                    See WORDPRESS_INTEGRATION.md for detailed plugin creation instructions
+                </p>
+            </div>
+
+            <div class="step">
+                <span class="step-number">B</span>
+                <strong>Page Builder (Easiest)</strong>
+                <ol>
+                    <li>Use Elementor or Divi</li>
+                    <li>Create new page</li>
+                    <li>Add HTML widget with content from index.html</li>
+                    <li>Add CSS and JavaScript widgets</li>
+                </ol>
+            </div>
+
+            <div class="step">
+                <span class="step-number">C</span>
+                <strong>Custom Page Template</strong>
+                <ol>
+                    <li>Create template file in theme</li>
+                    <li>Include the HTML, CSS, and JS files</li>
+                    <li>Create page with custom template</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>✅ Testing Your Setup</h2>
+            <ol>
+                <li>Visit your analyzer page</li>
+                <li>Upload a test image</li>
+                <li>Select skin conditions</li>
+                <li>Choose budget range</li>
+                <li>Enter description</li>
+                <li>Click "Analyze & Find Products"</li>
+                <li>Verify products load with match scores</li>
+                <li>Test "Add to Cart" button</li>
+                <li>Test "Wishlist" button</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h2>📚 Documentation</h2>
+            <p>Detailed guides are available in the project directory:</p>
+            <ul style="margin-left: 2rem; margin-top: 1rem;">
+                <li><strong>README.md</strong> - General project documentation</li>
+                <li><strong>WORDPRESS_INTEGRATION.md</strong> - WordPress-specific setup</li>
+                <li><strong>backend/.env.example</strong> - Configuration template</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>🆘 Troubleshooting</h2>
+            <div class="step">
+                <strong>Products not loading?</strong>
+                <ul style="margin-left: 2rem;">
+                    <li>Check WooCommerce API credentials in .env</li>
+                    <li>Verify products are published in WooCommerce</li>
+                    <li>Check server logs for errors</li>
+                </ul>
+            </div>
+            <div class="step">
+                <strong>CORS errors?</strong>
+                <ul style="margin-left: 2rem;">
+                    <li>Ensure backend CORS allows your domain</li>
+                    <li>Check browser console for specific errors</li>
+                </ul>
+            </div>
+            <div class="step">
+                <strong>No match scores?</strong>
+                <ul style="margin-left: 2rem;">
+                    <li>Ensure products have ingredient data</li>
+                    <li>Check product meta fields or descriptions</li>
+                </ul>
+            </div>
+        </div>
+
+        <a href="/" class="btn">Go to Skincare Analyzer</a>
+    </div>
+</body>
+</html>

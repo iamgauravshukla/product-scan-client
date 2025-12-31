@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skincare Product Analyzer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+    <!-- Animated SVG background for premium brand feel -->
+    <svg class="svg-bg" width="100%" height="100%" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+            <linearGradient id="g1" x1="0%" x2="100%">
+                <stop offset="0%" stop-color="#5D0F56" stop-opacity="0.28" />
+                <stop offset="100%" stop-color="#2B0C3B" stop-opacity="0.18" />
+            </linearGradient>
+            <linearGradient id="g2" x1="0%" x2="100%">
+                <stop offset="0%" stop-color="#290726" stop-opacity="0.18" />
+                <stop offset="100%" stop-color="#5D0F56" stop-opacity="0.09" />
+            </linearGradient>
+        </defs>
+        <g transform="translate(0,0)">
+            <ellipse class="bg-blob a" cx="12%" cy="20%" rx="420" ry="260" fill="url(#g1)"></ellipse>
+            <ellipse class="bg-blob b" cx="85%" cy="78%" rx="380" ry="220" fill="url(#g2)"></ellipse>
+        </g>
+    </svg>
+
+    <div class="container">
+        <header>
+            <h1>Skincare Product Analyzer</h1>
+            <p>Find the perfect products for your skin</p>
+        </header>
+
+        <div id="form-section" class="section">
+            <form id="skincare-form">
+                <!-- Photo Upload -->
+                <div class="form-group">
+                    <label for="photo">Upload Your Face Selfie</label>
+                    <div class="photo-upload">
+                        <input type="file" id="photo" accept="image/*" capture="camera">
+                        <button type="button" class="btn-secondary" onclick="document.getElementById('photo').click()">
+                            📷 Take Photo / Upload
+                        </button>
+                        <div id="photo-preview"></div>
+                    </div>
+                </div>
+
+                <!-- Skin Conditions Multi-Select -->
+                <div class="form-group">
+                    <label>Select Your Skin Conditions</label>
+                    <div class="checkbox-grid">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="conditions" value="acne">
+                            <span>Acne</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="conditions" value="oily">
+                            <span>Oily Skin</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="conditions" value="dry">
+                            <span>Dry Skin</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="conditions" value="sensitive">
+                            <span>Sensitive</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="conditions" value="redness">
+                            <span>Redness</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="conditions" value="dark-spots">
+                            <span>Dark Spots</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="conditions" value="wrinkles">
+                            <span>Wrinkles</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="conditions" value="large-pores">
+                            <span>Large Pores</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="conditions" value="uneven-texture">
+                            <span>Uneven Texture</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Budget Range -->
+                <div class="form-group">
+                    <label for="budget">Select Your Budget Range</label>
+                    <select id="budget" name="budget" required>
+                        <option value="">Choose budget range...</option>
+                        <option value="low">Budget-Friendly (Under ₱1,000)</option>
+                        <option value="mid">Mid-Range (₱1,000 - ₱2,500)</option>
+                        <option value="high">Premium (₱2,500 - ₱5,000)</option>
+                        <option value="luxury">Luxury (₱5,000+)</option>
+                    </select>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="description">Describe Your Skin Concerns</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows="4"
+                        placeholder="E.g., I get acne on my cheeks and oily T-zone. My skin reacts badly to fragrance..."
+                        required
+                    ></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-primary" id="submit-btn">
+                    Analyze & Find Products
+                </button>
+            </form>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading-section" class="section hidden">
+            <div class="loader"></div>
+            <p>Analyzing your skin and finding the best products...</p>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results-section" class="section hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="margin: 0;">Recommended Products for You</h2>
+                <button id="back-to-form-btn" class="btn-secondary" style="margin: 0;">
+                    ← Analyze Again
+                </button>
+            </div>
+            <div id="product-grid" class="product-grid"></div>
+        </div>
+    </div>
+
+    <!-- Quick View Modal -->
+    <div id="quick-view-modal" class="modal hidden" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="modal-backdrop" data-modal-close></div>
+        <div class="modal-panel">
+            <button class="modal-close" data-modal-close aria-label="Close">✕</button>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
