@@ -1,6 +1,8 @@
 // Configuration - Update these with your actual values
 const CONFIG = {
-    apiUrl: 'https://product-scan-backend-production.up.railway.app/api',
+    // apiUrl: 'https://product-scan-backend-production.up.railway.app/api',
+    apiUrl: 'http://localhost:3000/api',
+
     // You'll need to set these in your backend .env file
 };
 
@@ -14,9 +16,19 @@ const loadingSection = document.getElementById('loading-section');
 const resultsSection = document.getElementById('results-section');
 const productGrid = document.getElementById('product-grid');
 const backToFormBtn = document.getElementById('back-to-form-btn');
+const suggestionToggleBtn = document.getElementById('suggestion-toggle-btn');
+const suggestionCanvas = document.getElementById('suggestion-canvas');
+const suggestionContent = document.getElementById('suggestion-content');
 
 // State
 let uploadedImageData = null;
+const DEFAULT_SUGGESTIONS = [
+    "Incorporate more leafy greens and omega-3 rich foods like salmon into your diet to help reduce inflammation.",
+    "Drink at least 8 glasses of water daily to maintain skin hydration and balance oil production.",
+    "Limit dairy and high-glycemic foods which can exacerbate acne and oiliness."
+];
+
+const analysisPanel = document.getElementById('analysis-panel');
 
 // Photo Preview Handler
 photoInput.addEventListener('change', async (e) => {
@@ -140,9 +152,15 @@ form.addEventListener('submit', async (e) => {
 
         const data = await response.json();
 
-        // Display results
+        // Display analysis and results
         loadingSection.classList.add('hidden');
+        displayAnalysis(data.skinAnalysis || {}, data.suggestions || DEFAULT_SUGGESTIONS);
         displayProducts(data.products || []);
+        // Show suggestion toggle and populate with observations, recommendations, and suggestions
+        if (suggestionToggleBtn) {
+            suggestionToggleBtn.classList.remove('hidden');
+            populateSuggestionCanvas(data.skinAnalysis || {}, data.suggestions || DEFAULT_SUGGESTIONS);
+        }
         submitBtn.disabled = false;
 
         // Scroll to results
@@ -207,18 +225,117 @@ function showResultsMessage(message, type = 'info') {
     resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+// Analysis panel no longer needed - all content moved to sidebar
+// Keeping function stub for compatibility
+function displayAnalysis(skinAnalysis = {}, suggestions = []) {
+    // Rendering moved entirely to suggestion canvas
+}
+
+// Suggestion off-canvas controls
+function openSuggestionCanvas() {
+    if (!suggestionCanvas) return;
+    suggestionCanvas.classList.add('open');
+    suggestionCanvas.setAttribute('aria-hidden', 'false');
+    suggestionToggleBtn.setAttribute('aria-expanded', 'true');
+}
+
+function closeSuggestionCanvas() {
+    if (!suggestionCanvas) return;
+    suggestionCanvas.classList.remove('open');
+    suggestionCanvas.setAttribute('aria-hidden', 'true');
+    suggestionToggleBtn.setAttribute('aria-expanded', 'false');
+}
+
+function populateSuggestionCanvas(skinAnalysis = {}, suggestions = []) {
+    if (!suggestionContent) return;
+
+    let html = '';
+
+    // Render observations
+    const observations = skinAnalysis.observations || [];
+    if (Array.isArray(observations) && observations.length > 0) {
+        html += `
+            <div class="suggestion-item">
+                <div class="title">Skin Observations</div>
+                <p>${observations.join(', ')}</p>
+                <div class="divider"></div>
+            </div>
+        `;
+    }
+
+    // Render recommendations
+    const recommendations = skinAnalysis.recommendations || [];
+    if (Array.isArray(recommendations) && recommendations.length > 0) {
+        html += `
+            <div class="suggestion-item">
+                <div class="title">Recommendations</div>
+                <p>${recommendations.join(', ')}</p>
+                <div class="divider"></div>
+            </div>
+        `;
+    }
+
+    // Render suggestions
+    if (!suggestions || suggestions.length === 0) {
+        html += '<p style="color:var(--text-secondary)">No suggestions available.</p>';
+    } else {
+        // sanitize suggestion strings (remove code fences and stray JSON fragments)
+        const sanitize = (str) => {
+            if (!str) return '';
+            return String(str)
+                .replace(/```/g, '')
+                .replace(/[{}]/g, '')
+                .replace(/^"|"$/g, '')
+                .replace(/\,$/, '')
+                .trim();
+        };
+
+        const clean = suggestions.map(sanitize).filter(s => s.length > 0);
+
+        html += clean.map((s, idx) => `
+            <div class="suggestion-item" data-idx="${idx}">
+                <div class="title">Tips ${idx + 1}</div>
+                <p>${s}</p>
+                <div class="divider"></div>
+            </div>
+        `).join('');
+    }
+
+    suggestionContent.innerHTML = html;
+}
+
+// Wire up toggle button and close handlers (delegated for backdrop)
+if (suggestionToggleBtn) {
+    suggestionToggleBtn.addEventListener('click', () => openSuggestionCanvas());
+}
+
+document.addEventListener('click', (e) => {
+    // close when clicking any element with data-suggestion-close attribute
+    if (e.target.matches('[data-suggestion-close]') || e.target.closest('[data-suggestion-close]')) {
+        closeSuggestionCanvas();
+    }
+});
+
 // Create Product Card HTML
 function createProductCard(product) {
-    // Handle WooCommerce product image format
+    // Handle product image - support both old (objects with src) and new (direct URLs) formats
     let imageUrl = 'https://via.placeholder.com/300x300?text=No+Image';
-    if (product.images && product.images.length > 0 && product.images[0].src) {
-        imageUrl = product.images[0].src;
+    if (product.images && product.images.length > 0) {
+        const firstImage = product.images[0];
+        if (typeof firstImage === 'string') {
+            imageUrl = firstImage;
+        } else if (firstImage.src) {
+            imageUrl = firstImage.src;
+        }
     } else if (product.image) {
         imageUrl = product.image;
     }
     
-    // Get product link
-    const productLink = product.permalink || product.url || '#';
+    // Get product link - support multiple field names
+    const productLink = product.info_url || product.permalink || product.url || '#';
+    
+    // Get product name - support both 'title' and 'name'
+    const productName = product.title || product.name || 'Unknown Product';
     
     // Format price for Philippine Peso
     let price = 'N/A';
@@ -231,7 +348,7 @@ function createProductCard(product) {
 
     const matchScore = product.matchScore ? `${Math.round(product.matchScore)}% Match` : 'Recommended';
     
-    // Handle WooCommerce category format
+    // Handle category
     let category = 'Skincare';
     if (product.categories && product.categories.length > 0) {
         category = typeof product.categories[0] === 'string' 
@@ -259,7 +376,7 @@ function createProductCard(product) {
             <div class="product-badge">${matchScore}</div>
             <div class="product-image-wrapper">
                 <a href="${productLink}" target="_blank" rel="noopener noreferrer" style="display: block; width: 100%; height: 100%; cursor: pointer;">
-                    <img src="${imageUrl}" alt="${product.name}" class="product-image" loading="lazy">
+                    <img src="${imageUrl}" alt="${productName}" class="product-image" loading="lazy">
                 </a>
                 <button class="btn-wishlist-icon" data-product-id="${product.id}" title="Add to Wishlist">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -270,7 +387,7 @@ function createProductCard(product) {
             <div class="product-content">
                 <div class="product-header">
                     <h3 class="product-title">
-                        <a href="${productLink}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">${product.name}</a>
+                        <a href="${productLink}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">${productName}</a>
                     </h3>
                     <div class="product-match">${matchScore}</div>
                 </div>
@@ -444,6 +561,9 @@ if (backToFormBtn) {
         resultsSection.classList.add('hidden');
         formSection.classList.remove('hidden');
         document.querySelector('header').classList.remove('hidden');
+        // Hide suggestion toggle and close canvas when returning to form
+        if (suggestionToggleBtn) suggestionToggleBtn.classList.add('hidden');
+        try { closeSuggestionCanvas(); } catch (e) { /* ignore */ }
         
         // Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });

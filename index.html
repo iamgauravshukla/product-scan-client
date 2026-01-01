@@ -149,6 +149,26 @@
         </div>
     </div>
 
+    <!-- Suggestion Off-Canvas Toggle Button (hidden until results) -->
+    <button id="suggestion-toggle-btn" class="suggestion-toggle hidden" aria-expanded="false" aria-controls="suggestion-canvas" title="Open Suggestions">💡 </button>
+
+    <!-- Off-canvas Suggestions Panel -->
+    <aside id="suggestion-canvas" class="suggestion-canvas" aria-hidden="true">
+        <div class="suggestion-backdrop" data-suggestion-close></div>
+        <div class="suggestion-panel">
+            <div class="suggestion-header">
+                <div>
+                    <h3>Suggestions & Care Tips</h3>
+                    <p class="muted">Personalized guidance to support your skin goals</p>
+                </div>
+                <button class="suggestion-close" data-suggestion-close aria-label="Close suggestions">✕</button>
+            </div>
+            <div id="suggestion-content" class="suggestion-content">
+                <!-- populated dynamically -->
+            </div>
+        </div>
+    </aside>
+
     <script src="script.js"></script>
 </body>
 </html>
