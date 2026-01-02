@@ -1,7 +1,7 @@
 // Configuration - Update these with your actual values
 const CONFIG = {
-    // apiUrl: 'https://product-scan-backend-production.up.railway.app/api',
-    apiUrl: 'http://localhost:3000/api',
+    apiUrl: 'https://product-scan-backend-production.up.railway.app/api',
+    // apiUrl: 'http://localhost:3000/api',
 
     // You'll need to set these in your backend .env file
 };
