@@ -168,7 +168,7 @@ form.addEventListener('submit', async (e) => {
 
     } catch (error) {
         console.error('Error:', error);
-        showResultsMessage(`An error occurred: ${error.message}. Please ensure backend is running and CORS is configured.`, 'error');
+        showResultsMessage(`An error occurred: ${error.message}.`, 'error');
     }
 });
 
