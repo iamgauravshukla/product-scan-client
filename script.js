@@ -553,6 +553,15 @@ if (backToFormBtn) {
     backToFormBtn.addEventListener('click', () => {
         // Reset form
         form.reset();
+        
+        // Reset all condition pills to inactive state
+        document.querySelectorAll('.checkbox-item').forEach(item => {
+            item.classList.remove('active');
+            item.setAttribute('aria-pressed', 'false');
+            const input = item.querySelector('input[type="checkbox"]');
+            if (input) input.checked = false;
+        });
+        
         photoPreview.innerHTML = '';
         photoPreview.classList.remove('has-image');
         uploadedImageData = null;
